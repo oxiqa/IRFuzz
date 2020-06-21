@@ -4,9 +4,12 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+pylint = "*"
 
 [packages]
 watchdog = "*"
+python-magic = "*"
+yara = "*"
 
 [requires]
 python_version = "3.8"
