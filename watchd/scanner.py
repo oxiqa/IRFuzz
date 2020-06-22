@@ -40,8 +40,8 @@ ZIP_MIME = "application/zip"
 def remove(file):
     try:
         os.remove(file)
-    except Exception as e:
-        print("caught {}".format(e))
+    except Exception:
+        return
 
 def cleanempty(root):
     """
