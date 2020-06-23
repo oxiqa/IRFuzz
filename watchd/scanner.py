@@ -21,21 +21,19 @@ from typing import List
 
 @dataclass
 class Result:
-    zipfile: bool = False
-    zipentry: str = ""
-    filename: str = ""
-    decoder: str = ""
-    namespace: str = ""
-    rule: str = ""
-    sha2sum: str = ""
-    md5sum: str = ""
-    ctime: int = 0
-    mtime: int = 0
-    strings: List[str] = field(default_factory=list)
-
+    zipfile: bool = False # indicate if file is a zip file
+    zipentry: str = "" # if it's a zip file, the filename inside zip that matched
+    filename: str = "" # name of the file, in case of zip files it's the zip file's name
+    decoder: str = "" 
+    namespace: str = "" # yara namespace
+    rule: str = "" # yara rule
+    sha2sum: str = "" # sha2sum of the file set as filename field
+    md5sum: str = "" # md5sum of the file set as filename field
+    ctime: int = 0 # file ctime as reported by the FS
+    mtime: int = 0 # file mtime as reported by the FS
+    strings: List[str] = field(default_factory=list) # yara strings output
 
 ZIP_MIME = "application/zip"
-
 
 def remove(file):
     try:
@@ -127,8 +125,6 @@ class ResultWriter(threading.Thread):
                         csv.write("{}\n".format(",".join(rec)))
 
                     csv.flush()
-                
-                # print("got result {}".format(result))
             except queue.Empty:
                 continue
     def stop(self):
@@ -144,7 +140,6 @@ class FullScanner(threading.Thread):
 
     def run(self):
         scanfull(self.__root, self.__sq, self.__options)
-
 
 class Scanner(threading.Thread):
     def __init__(self, root, scanq, resultq, options):
@@ -170,8 +165,6 @@ class Scanner(threading.Thread):
 
     def stop(self):
         self.__stop = True
-
-
 
 def gen_sum_file(f):
     """
@@ -220,8 +213,18 @@ def fmtyarastrings(strings):
         r.append(repr(stringdata[2]))
     return r
 
+def check_yara(options):
+    if options.yara == None: return False
+    if not 'yara' in sys.modules:
+        print('Error: option yara requires the YARA Python module.')
+        return False
+    return True
 
 def scanregular(f, options):
+
+    if not check_yara(options):
+        return
+
     rules = YARACompile(options.yara)
 
     stat_result = os.stat(f)
@@ -262,10 +265,9 @@ def scanregular(f, options):
     return results
 
 def scanzip(f, options):
-    if options.yara == None: return
-    if not 'yara' in sys.modules:
-        print('Error: option yara requires the YARA Python module.')
+    if not check_yara(options):
         return
+
     rules = YARACompile(options.yara)
     zipfilename = f
     oZipfile = zipfile.ZipFile(zipfilename, 'r')
@@ -327,4 +329,3 @@ def scanzip(f, options):
                         fillfinfo(stat_result, r)
                         results.append(r)
     return results
-
