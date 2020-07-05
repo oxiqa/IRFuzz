@@ -31,7 +31,8 @@ class Result:
     md5sum: str = "" # md5sum of the file set as filename field
     ctime: int = 0 # file ctime as reported by the FS
     mtime: int = 0 # file mtime as reported by the FS
-    strings: List[str] = field(default_factory=list) # yara strings output
+    yaraidentifier: str = ""
+    yarastring: str = ""
 
 ZIP_MIME = "application/zip"
 
@@ -89,7 +90,7 @@ class ResultWriter(threading.Thread):
         # write csv headers before main loop
         headers = [
                 "filename", "md5sum", "sha2sum", "is_zipfile", "yara_rule",
-                "yara_ns", "yara_strings", "ctime"
+                "yara_ns", "yara_identifier", "yara_string" "ctime"
                 ]
 
         if not os.path.exists(self.__options.csv):
@@ -119,7 +120,8 @@ class ResultWriter(threading.Thread):
                                 str(result.zipfile),
                                 result.rule,
                                 result.namespace,
-                                "\"{}\"".format(",".join(result.strings)),
+                                "\"{}\"".format(result.yaraidentifier),
+                                "\"{}\"".format(result.yarastring),
                                 str(result.ctime)
                                 ]
                         csv.write("{}\n".format(",".join(rec)))
@@ -215,10 +217,10 @@ def fillfinfo(stat_result, scan_result):
 def fmtyarastrings(strings):
     r = []
     for stringdata in strings:
-        r.append('%06x' % stringdata[0])
-        r.append(stringdata[1])
-        r.append(binascii.hexlify(stringdata[2]).decode("utf8"))
-        r.append(repr(stringdata[2]))
+        r.append([stringdata[1], stringdata[2].decode("utf8")]) # identifier, string
+        # r.append('%06x' % stringdata[0])
+        # r.append(binascii.hexlify(stringdata[2]).decode("utf8"))
+        # r.append(repr(stringdata[2]))
     return r
 
 def check_yara(options):
@@ -260,16 +262,19 @@ def scanregular(f, options):
     for oDecoder in oDecoders:
         while oDecoder.Available():
             for result in rules.match(data=oDecoder.Decode()):
-                r = Result()
-                r.filename = f
-                r.decoder = oDecoder.Name()
-                r.sha2sum = sha2sum
-                r.md5sum = md5sum
-                r.namespace  = result.namespace
-                r.rule = result.rule
-                r.strings = fmtyarastrings(result.strings)
-                fillfinfo(stat_result, r)
-                results.append(r)
+                yaraout = fmtyarastrings(result.strings)
+                for out in yaraout:
+                    r = Result()
+                    r.filename = f
+                    r.decoder = oDecoder.Name()
+                    r.sha2sum = sha2sum
+                    r.md5sum = md5sum
+                    r.namespace  = result.namespace
+                    r.rule = result.rule
+                    r.yaraidentifier = out[0]
+                    r.yarastring = out[1]
+                    fillfinfo(stat_result, r)
+                    results.append(r)
     return results
 
 def scanzip(f, options):
@@ -321,19 +326,19 @@ def scanzip(f, options):
             for oDecoder in oDecoders:
                 while oDecoder.Available():
                     for result in rules.match(data=oDecoder.Decode()):
-                        r = Result()
-                        r.filename = zipfilename
+                        yaraout = fmtyarastrings(result.strings)
+                        for out in yaraout:
+                            r = Result()
+                            r.zipfile = True
+                            r.filename = zipfilename
+                            r.decoder = oDecoder.Name()
+                            r.sha2sum = zipssum
+                            r.md5sum = zipmsum
+                            r.namespace  = result.namespace
+                            r.rule = result.rule
+                            r.yaraidentifier = out[0]
+                            r.yarastring = out[1]
+                            fillfinfo(stat_result, r)
+                            results.append(r)
 
-                        r.zipfile = True
-                        # r.zipsha1 = zipssum
-                        # r.zipmd5 = zipmsum
-                       
-                        r.decoder = oDecoder.Name()
-                        r.sha2sum = zipssum
-                        r.md5sum = zipmsum
-                        r.namespace  = result.namespace
-                        r.rule = result.rule
-                        r.strings = fmtyarastrings(result.strings)
-                        fillfinfo(stat_result, r)
-                        results.append(r)
     return results
