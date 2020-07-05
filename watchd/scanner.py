@@ -149,18 +149,26 @@ class Scanner(threading.Thread):
         self.__options = options
         self.__stop = False
         self.__root = root
+        self.__extensions = options.extensions.split(',')
     def run(self):
         while True:
             try:
                 if self.__stop:
                     return
                 file = self.__sq.get(timeout=3)
+                _, extension = os.path.splitext(file)
+
+                if extension not in self.__extensions:
+                    continue
+
                 result = scan(file, self.__options)
                 print("scanned file: {}".format(file))
                 self.__rq.put(result)
-                remove(file)
+                if self.__options.delete:
+                    remove(file)
             except queue.Empty:
-                cleanempty(self.__root)
+                if self.__options.delete:
+                    cleanempty(self.__root)
                 continue
 
     def stop(self):

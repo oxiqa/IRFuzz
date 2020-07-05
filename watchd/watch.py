@@ -60,6 +60,15 @@ class DirWatcher(threading.Thread):
 
 
 def Main():
+    defaultExtensions = [
+            # Microsoft Office Word supported file formats
+            ".doc", ".docm", ".docx", ".docx", ".dot", ".dotm", ".dotx", ".odt",
+            # Microsoft Office Excel supported file formats
+            ".ods", ".xla", ".xlam", ".xls", ".xls", ".xlsb", ".xlsm", ".xlsx", ".xlsx", ".xlt", ".xltm", ".xltx", ".xlw", 
+            # Microsoft Office PowerPoint supported file formats
+            ".pot", ".potm", ".potx", ".ppa", ".ppam", ".pps", ".ppsm", ".ppsx", ".ppt", ".pptm", ".pptx", ".pptx", ".pptx"
+            ]
+
     oParser = optparse.OptionParser(usage="usage: %prog [dir] [rules]\n")
     oParser.add_option('-s', '--select', default='', help='select index nr or name')
     oParser.add_option('-o', '--output', help='Output to file')
@@ -73,6 +82,9 @@ def Main():
     oParser.add_option('-f', '--find', type=str, default='', help='Find PK MAGIC sequence (use l or list for listing, number for selecting)')
 
     oParser.add_option('--csv', type=str, default='result.csv', help='Output file for csv results')
+    oParser.add_option('--extensions', type=str, default=','.join(defaultExtensions), help='Limit scan to listed file extensions only')
+    oParser.add_option('--delete', action='store_true', default=False, help='Delete files after scanning')
+
     (options, args) = oParser.parse_args()
 
     if len(args) > 1:
