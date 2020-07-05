@@ -9,7 +9,7 @@ pylint = "*"
 [packages]
 watchdog = "*"
 python-magic = "*"
-yara = "*"
+yara-python = "*"
 
 [requires]
 python_version = "3.8"
