@@ -1,1 +1,4 @@
-watchd/__pycache__
+*.csv
+data
+rules.d
+watchd.tar.gz
