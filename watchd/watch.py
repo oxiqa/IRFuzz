@@ -6,6 +6,7 @@ import queue
 import threading
 
 from watchdog.observers import Observer
+from watchdog.observers.polling import PollingObserver
 from watchdog.events import FileSystemEventHandler
 
 import magic # https://github.com/ahupp/python-magic
@@ -36,6 +37,10 @@ class DirWatcher(threading.Thread):
         self.__dirpath = dirpath
         self.__handler = WatchdogHandler(scanq, options)
         self.__observer = Observer()
+
+        if options.poll:
+            self.__observer = PollingObserver()
+
         self.__options = options
         self.__scanq = scanq
         self.__stop = False
@@ -84,6 +89,7 @@ def Main():
     oParser.add_option('--csv', type=str, default='result.csv', help='Output file for csv results')
     oParser.add_option('--extensions', type=str, default=','.join(defaultExtensions), help='Limit scan to listed file extensions only')
     oParser.add_option('--delete', action='store_true', default=False, help='Delete files after scanning')
+    oParser.add_option('--poll', action='store_true', default=False, help='Poll filesystem for changes, for network filesystems')
 
     (options, args) = oParser.parse_args()
 
