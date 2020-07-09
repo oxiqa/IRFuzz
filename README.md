@@ -12,6 +12,7 @@ Linux or OS X
 - [Yara Rules](https://github.com/Yara-Rules/rules) - You may download yara rules from here or import your own custom ruleset. 
 
 pipenv install
+
 pipenv shell
 
 # Running IRFuzz - Watchd
