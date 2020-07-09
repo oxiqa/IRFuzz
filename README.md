@@ -19,7 +19,9 @@ pipenv shell
 
 ![alt text](https://github.com/oxiqa/IRFuzz/raw/master/scanner.PNG)
 
-### python -m watchd.watch ~/tools/IR/ -y rules/maldocs --csv csvfile.csv
+### Running IRFuzz
+
+- python -m watchd.watch ~/tools/IR/ -y rules/maldocs --csv csvfile.csv
 
 ## Supported Features
 
@@ -56,6 +58,15 @@ The default extensions are  = [
             ".pot", ".potm", ".potx", ".ppa", ".ppam", ".pps", ".ppsm", ".ppsx", ".ppt", ".pptm", ".pptx", ".pptx", ".pptx"
             ]
             
+
+
+### zipdump.py 
+
+IRFuzz is forked from [zipdump.py](https://github.com/DidierStevens/DidierStevensSuite/blob/master/zipdump.py)
+
+
+
+
 
 
 
