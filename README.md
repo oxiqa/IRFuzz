@@ -16,29 +16,10 @@ pipenv shell
 
 # Running IRFuzz - Watchd
 
+![alt text](https://github.com/oxiqa/IRFuzz/raw/master/scanner.PNG)
+
 ### python -m watchd.watch ~/tools/IR/ -y rules/maldocs --csv csvfile.csv
 
-### custom extensions --extensions zip
-
-### delete matched file --delete
-
-### Polling (inotify not supported) --polling
-
-
-
-(Adds --poll option to force the use of polling mechanism to detect changes in data directory. Polling is slower than the underlying mechanism in OS to detect changes but it's necessary with certain file systems such as SMB.)
-
-
-
-The default extensions are  = [
-            # Microsoft Office Word supported file formats
-            ".doc", ".docm", ".docx", ".docx", ".dot", ".dotm", ".dotx", ".odt",
-            # Microsoft Office Excel supported file formats
-            ".ods", ".xla", ".xlam", ".xls", ".xls", ".xlsb", ".xlsm", ".xlsx", ".xlsx", ".xlt", ".xltm", ".xltx", ".xlw",
-            # Microsoft Office PowerPoint supported file formats
-            ".pot", ".potm", ".potx", ".ppa", ".ppam", ".pps", ".ppsm", ".ppsx", ".ppt", ".pptm", ".pptx", ".pptx", ".pptx"
-            ]
-            
 ## Supported Features
 
 - Scans new files with inotify
@@ -49,6 +30,33 @@ The default extensions are  = [
 - lists matched Yara functions with yarastrings with ctime
 - csv results for filebeat 
 
+### custom extensions
+
+-  python -m watchd.watch ~/tools/IR/ -y rules/maldocs --csv csvfile.csv --extensions zip,rar
+
+### delete matched file 
+
+- python -m watchd.watch ~/tools/IR/ -y rules/maldocs --csv csvfile.csv --delete
+
+### Polling (inotify not supported)
+
+- python -m watchd.watch ~/tools/IR/ -y rules/maldocs --csv csvfile.csv --polling 
+
+(Adds --poll option to force the use of polling mechanism to detect changes in data directory. Polling is slower than the underlying mechanism in OS to detect changes but it's necessary with certain file systems such as SMB.)
+
+### default extensions if no extensions are mentioned.
+
+The default extensions are  = [
+            # Microsoft Office Word supported file formats
+            ".doc", ".docm", ".docx", ".docx", ".dot", ".dotm", ".dotx", ".odt",
+            # Microsoft Office Excel supported file formats
+            ".ods", ".xla", ".xlam", ".xls", ".xls", ".xlsb", ".xlsm", ".xlsx", ".xlsx", ".xlt", ".xltm", ".xltx", ".xlw",
+            # Microsoft Office PowerPoint supported file formats
+            ".pot", ".potm", ".potx", ".ppa", ".ppam", ".pps", ".ppsm", ".ppsx", ".ppt", ".pptm", ".pptx", ".pptx", ".pptx"
+            ]
+            
 
 
-![alt text](https://github.com/oxiqa/IRFuzz/raw/master/scanner.PNG)
+
+
+
