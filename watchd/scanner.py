@@ -10,15 +10,17 @@ import csv
 
 from io import BytesIO as DataIO
 
-from .zipdump import ZIPDump
-from .zipdump import YARACompile
-from .zipdump import cIdentity
-from .zipdump import LoadDecoders
-from .zipdump import QUOTE, C2BIP3
-from .zipdump import DecideToSelect
+from watchd.zipdump import ZIPDump
+from watchd.zipdump import YARACompile
+from watchd.zipdump import cIdentity
+from watchd.zipdump import LoadDecoders
+from watchd.zipdump import QUOTE, C2BIP3
+from watchd.zipdump import DecideToSelect
 
 from dataclasses import dataclass, field
 from typing import List
+
+from loguru import logger
 
 @dataclass
 class Result:
@@ -168,8 +170,10 @@ class Scanner(threading.Thread):
                     continue
 
                 result = scan(file, self.__options)
-                print("scanned file: {}".format(file))
+                logger.info("scanned file: {}".format(file))
                 self.__rq.put(result)
+                if len(result) > 1:
+                    logger.warning("possible malicious file: {}".format(file))
                 if self.__options.delete:
                     remove(file)
             except queue.Empty:
