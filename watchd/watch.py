@@ -10,6 +10,7 @@ from watchdog.observers.polling import PollingObserver
 from watchdog.events import FileSystemEventHandler
 
 import magic # https://github.com/ahupp/python-magic
+from loguru import logger
 
 from .zipdump import ZIPDump, ValidateOptions, OptionsEnvironmentVariables
 from .scanner import scan, Scanner, ResultWriter, scanfull, FullScanner
@@ -23,9 +24,6 @@ class WatchdogHandler(FileSystemEventHandler):
         self.__options = options
         self.__sq = scanq
 
-    def on_any_event(self, event):
-        abs_path = os.path.abspath(event.src_path)
-        print("{}".format(abs_path))
     def on_created(self, event):
         abs_path = os.path.abspath(event.src_path)
         self.__sq.put(abs_path)
@@ -133,7 +131,7 @@ def Main():
         watcher.stop()
         scanner.stop()
         resultwriter.stop()
-        print("shutting down")
+        logger.info("shutting down")
 
 if __name__ == "__main__":
     Main()
