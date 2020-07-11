@@ -217,7 +217,13 @@ def fillfinfo(stat_result, scan_result):
 def fmtyarastrings(strings):
     r = []
     for stringdata in strings:
-        r.append([stringdata[1], stringdata[2].decode("utf8")]) # identifier, string
+        identifier = stringdata[1]
+
+        string = repr(stringdata[2])
+        if string.startswith('b'):
+            string = string[2:-1]
+
+        r.append([identifier, string]) # identifier, string
         # r.append('%06x' % stringdata[0])
         # r.append(binascii.hexlify(stringdata[2]).decode("utf8"))
         # r.append(repr(stringdata[2]))
