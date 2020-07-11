@@ -91,7 +91,7 @@ class ResultWriter(threading.Thread):
         # write csv headers before main loop
         headers = [
                 "filename", "md5sum", "sha2sum", "is_zipfile", "yara_rule",
-                "yara_ns", "yara_identifier", "yara_string" "ctime"
+                "yara_ns", "yara_identifier", "yara_string", "ctime"
                 ]
 
         if self.__options.csv != "":
