@@ -10,6 +10,7 @@ pylint = "*"
 watchdog = "*"
 python-magic = "*"
 yara-python = "*"
+loguru = "*"
 
 [requires]
 python_version = "3.8"
