@@ -172,7 +172,7 @@ class Scanner(threading.Thread):
                 result = scan(file, self.__options)
                 logger.info("scanned file: {}".format(file))
                 self.__rq.put(result)
-                if len(result) > 1:
+                if len(result) > 0:
                     logger.warning("possible malicious file: {}".format(file))
                     if self.__options.delete:
                         remove(file)
