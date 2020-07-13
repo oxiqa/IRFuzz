@@ -114,6 +114,7 @@ class ResultWriter(threading.Thread):
         while True:
             try:
                 if self.__stop:
+                    csvf.flush()
                     return
                 results = self.__rq.get(timeout=3)
                 if self.__options.csv == "" or results is None:
@@ -132,6 +133,8 @@ class ResultWriter(threading.Thread):
                             str(result.ctime)
                             ]
                     writer.writerow(rec)
+
+                csvf.flush()
 
             except queue.Empty:
                 continue
