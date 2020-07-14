@@ -8,12 +8,15 @@ IRFuzz is a simple scanner with yara rules for documents / archives.
 
 Linux or OS X
 - [Yara](https://github.com/VirusTotal/yara/): just use the latest release source code, compile and install it (or install it via pip install yara-python)
-- Some Python packages: pip install yara-python 
 - [Yara Rules](https://github.com/Yara-Rules/rules) - You may download yara rules from here or import your own custom ruleset. 
+- Python dependencies
 
-pipenv install
+Dependencies are managed with `pipenv`. To get started install dependencies and activate virtual environment
+with following commands:
 
-pipenv shell
+`$ pipenv install`
+
+`$ pipenv shell`
 
 # Running IRFuzz - Watchd
 
@@ -21,48 +24,44 @@ pipenv shell
 
 ### Running IRFuzz
 
-- python -m watchd.watch ~/tools/IR/ -y rules/maldocs --csv csvfile.csv
+`$ python -m watchd.watch ~/tools/IR/ -y rules/maldocs --csv csvfile.csv`
 
 ## Supported Features
 
 - Scans new files with inotify
-- polling if inotify is not supported
-- custom extensions are supported
-- delete mode will delete matched file
-- recursive directory scan
-- lists matched Yara functions with yarastrings with ctime
-- csv results for filebeat 
+- Polling if inotify is not supported
+- Custom extensions are supported
+- Delete mode will delete matched file
+- Recursive directory scan
+- Lists matched Yara functions with yarastrings with ctime
+- CSV results for Filebeat 
 
-### custom extensions
+### Custom extensions
 
--  python -m watchd.watch ~/tools/IR/ -y rules/maldocs --csv csvfile.csv --extensions zip,rar
+`$ python -m watchd.watch ~/tools/IR/ -y rules/maldocs --csv csvfile.csv --extensions .zip,.rar`
 
-### delete matched file 
+### Delete matched file 
 
-- python -m watchd.watch ~/tools/IR/ -y rules/maldocs --csv csvfile.csv --delete
+`$ python -m watchd.watch ~/tools/IR/ -y rules/maldocs --csv csvfile.csv --delete`
 
 ### Polling (inotify not supported)
 
-- python -m watchd.watch ~/tools/IR/ -y rules/maldocs --csv csvfile.csv --polling 
+`$ python -m watchd.watch ~/tools/IR/ -y rules/maldocs --csv csvfile.csv --polling` 
 
-(Adds --poll option to force the use of polling mechanism to detect changes in data directory. Polling is slower than the underlying mechanism in OS to detect changes but it's necessary with certain file systems such as SMB.)
+Adds --poll option to force the use of polling mechanism to detect changes in data directory. Polling is slower than the underlying mechanism in OS to detect changes but it's necessary with certain file systems such as SMB mounts.
 
-### default extensions if no extensions are mentioned.
+### Default extensions if no extensions are mentioned.
 
-The default extensions are  = [
-            # Microsoft Office Word supported file formats
-            ".doc", ".docm", ".docx", ".docx", ".dot", ".dotm", ".dotx", ".odt",
-            # Microsoft Office Excel supported file formats
-            ".ods", ".xla", ".xlam", ".xls", ".xls", ".xlsb", ".xlsm", ".xlsx", ".xlsx", ".xlt", ".xltm", ".xltx", ".xlw",
-            # Microsoft Office PowerPoint supported file formats
-            ".pot", ".potm", ".potx", ".ppa", ".ppam", ".pps", ".ppsm", ".ppsx", ".ppt", ".pptm", ".pptx", ".pptx", ".pptx"
-            ]
-            
-
+##### Microsoft Office Word supported file formats
+.doc .docm .docx .docx .dot .dotm .dotx .odt
+##### Microsoft Office Excel supported file formats
+.ods .xla .xlam .xls .xls .xlsb .xlsm .xlsx .xlsx .xlt .xltm .xltx .xlw
+##### Microsoft Office PowerPoint supported file formats
+.pot .potm .potx .ppa .ppam .pps .ppsm .ppsx .ppt .pptm .pptx .pptx .pptx
 
 ### zipdump.py 
 
-IRFuzz is forked from [zipdump.py](https://github.com/DidierStevens/DidierStevensSuite/blob/master/zipdump.py)
+IRFuzz uses [zipdump.py](https://github.com/DidierStevens/DidierStevensSuite/blob/master/zipdump.py) for zip file analysis.
 
 
 
