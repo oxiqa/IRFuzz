@@ -1,6 +1,6 @@
-# IRFuzz - Simple Maldoc scanner with Yara Rules
+# IRFuzz - Simple Scanner with Yara Rules
 
-IRFuzz is a simple scanner with yara rules for documents / archives.
+IRFuzz is a simple scanner with yara rules for document archives or any files.
 
 # Install
 
