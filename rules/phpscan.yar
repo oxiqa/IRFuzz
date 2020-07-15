@@ -87,6 +87,9 @@ rule AnyMaliciousPHP
         $malshell1 = "'ev'.'al'" fullword
         $malshell2 = /(\$\w+=[^;]*)*;\$\w+=@?\$\w+\(/  //b374k
         $malshell3 = /\$\w=\$[a-zA-Z]\('',\$\w\);\$\w\(\);/ 
+        $malshell7 = "array_intersect_uassoc(array($_REQUEST[$password] => \"\"), array(1), $f);" fullword ascii
+        $malshell8 = /\\x[0-9a-zA-Z]{2}\\x[0-9a-zA-Z]{2}\\x[0-9a-zA-Z]{2}\\x[0-9a-zA-Z]{2}\\x[0-9a-zA-Z]{2}\\x[0-9a-zA-Z]{2}\\x[0-9a-zA-Z]{2}\\x[0-9a-zA-Z]{2}/
+
         $system = /system\(/ fullword nocase 
 
         $whitelist = /escapeshellcmd|escapeshellarg/ nocase
