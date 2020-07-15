@@ -84,7 +84,7 @@ rule AnyMaliciousPHP
         $malshell4 = "b374k" fullword nocase
         $malshell5 = "weevely" fullword nocase
         $malshell6 = "backdoor" fullword nocase
-        $malshell1 = "'ev'.'al'"
+        $malshell1 = "'ev'.'al'" fullword
         $malshell2 = /(\$\w+=[^;]*)*;\$\w+=@?\$\w+\(/  //b374k
         $malshell3 = /\$\w=\$[a-zA-Z]\('',\$\w\);\$\w\(\);/ 
         $system = /system\(/ fullword nocase 
@@ -110,7 +110,7 @@ rule AnyMaliciousPHPBase64
         $whitelist = /escapeshellcmd|escapeshellarg/ nocase
 
     condition:
-        (not $whitelist and (any of ($shell*) and (filesize < 4KB) or $pregreplace and filesize < 200 or any of ($eval*) and filesize < 8KB or any of ($system*) and filesize < 3KB or #eval1 > 5  or #shell2 > 3  ))
+        (not $whitelist and (any of them or #eval1 > 5  or #shell2 > 3  ))
 }
 
 
@@ -136,10 +136,14 @@ rule hackerstrings
 {
 
     strings:
-        $ = "john.barker446" nocase
+        $ = "john.barker446" fullword nocase
+        $ = "fuck" fullword nocase
+        $ = "xshellnet" fullword nocase
+        $ = "asshole" fullword nocase
+        
 
     condition:
-        all of them
+        any of them
 }
 
 
