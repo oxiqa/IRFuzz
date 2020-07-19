@@ -13,7 +13,8 @@ import magic # https://github.com/ahupp/python-magic
 from loguru import logger
 
 from .zipdump import ZIPDump, ValidateOptions, OptionsEnvironmentVariables
-from .scanner import scan, Scanner, ResultWriter, scanfull, FullScanner
+from .scanner import scan, Scanner, ResultWriter, scanfull, FullScanner 
+from .result  import CSVWriter, HTTPWriter
 
 # https://pythonhosted.org/watchdog/_modules/watchdog/events.html#PatternMatchingEventHandler
 class WatchdogHandler(FileSystemEventHandler):
@@ -61,6 +62,20 @@ class DirWatcher(threading.Thread):
         self.__observer.join()
         self.__stop = True
 
+def setupWriters(options):
+    writers = []
+    
+    try:
+        if options.csv != "" and options.csv is not None:
+            writers.append(CSVWriter(options.csv))
+        if options.token != "" and options.token is not None:
+            writers.append(HTTPWriter(options.token))
+    except Exception:
+        logger.error("error loading writers: {}".format(sys.exc_info()))
+
+    return writers
+
+
 
 def Main():
     defaultExtensions = [
@@ -88,6 +103,7 @@ def Main():
     oParser.add_option('--extensions', type=str, default=','.join(defaultExtensions), help='Limit scan to listed file extensions only')
     oParser.add_option('--delete', action='store_true', default=False, help='Delete files after scanning')
     oParser.add_option('--poll', action='store_true', default=False, help='Poll filesystem for changes, for network filesystems')
+    oParser.add_option('--token', type=str, help='Post results to API')
 
     (options, args) = oParser.parse_args()
 
@@ -102,7 +118,9 @@ def Main():
     resultq = queue.Queue()
     scanq = queue.Queue()
 
-    resultwriter = ResultWriter(resultq, options)
+    writers = setupWriters(options)
+
+    resultwriter = ResultWriter(resultq, writers, options)
     resultwriter.daemon = True
 
     scanner = Scanner(root, scanq, resultq, options)
