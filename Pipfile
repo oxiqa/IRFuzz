@@ -11,6 +11,7 @@ watchdog = "*"
 python-magic = "*"
 yara-python = "*"
 loguru = "*"
+requests = "*"
 
 [requires]
 python_version = "3.8"
