@@ -6,7 +6,6 @@ import zipfile
 import threading
 import os
 import queue
-import csv
 
 from io import BytesIO as DataIO
 
@@ -16,26 +15,9 @@ from watchd.zipdump import cIdentity
 from watchd.zipdump import LoadDecoders
 from watchd.zipdump import QUOTE, C2BIP3
 from watchd.zipdump import DecideToSelect
-
-from dataclasses import dataclass, field
-from typing import List
+from watchd.result import Result, ResultWriter
 
 from loguru import logger
-
-@dataclass
-class Result:
-    zipfile: bool = False # indicate if file is a zip file
-    zipentry: str = "" # if it's a zip file, the filename inside zip that matched
-    filename: str = "" # name of the file, in case of zip files it's the zip file's name
-    decoder: str = "" 
-    namespace: str = "" # yara namespace
-    rule: str = "" # yara rule
-    sha2sum: str = "" # sha2sum of the file set as filename field
-    md5sum: str = "" # md5sum of the file set as filename field
-    ctime: int = 0 # file ctime as reported by the FS
-    mtime: int = 0 # file mtime as reported by the FS
-    yaraidentifier: str = ""
-    yarastring: str = ""
 
 ZIP_MIME = "application/zip"
 
@@ -82,64 +64,6 @@ def scanfull(root, scanq, options):
         for f in fnames:
             fullpath = os.path.join(dpath, f)
             scanq.put(fullpath)
-
-class ResultWriter(threading.Thread):
-    def __init__(self, resultq, options):
-        super().__init__()
-        self.__rq = resultq
-        self.__options = options
-        self.__stop = False
-    def run(self):
-        # write csv headers before main loop
-        headers = [
-                "filename", "md5sum", "sha2sum", "is_zipfile", "yara_rule",
-                "yara_ns", "yara_identifier", "yara_string", "ctime"
-                ]
-
-        if self.__options.csv != "":
-            if not os.path.exists(self.__options.csv):
-                with open(self.__options.csv, 'w'): pass
-
-            csvf = open(self.__options.csv, "a")
-            if not csvf.writable():
-                raise Exception("file is not writable")
-            
-            filesize = os.path.getsize(self.__options.csv)
-
-            writer = csv.writer(csvf)
-            # if file is empty write headers
-            if filesize == 0:
-                writer.writerow(headers)
-
-        while True:
-            try:
-                if self.__stop:
-                    csvf.flush()
-                    return
-                results = self.__rq.get(timeout=3)
-                if self.__options.csv == "" or results is None:
-                    pass
-
-                for result in results:
-                    rec = [
-                            result.filename,
-                            result.md5sum,
-                            result.sha2sum,
-                            str(result.zipfile),
-                            result.rule,
-                            result.namespace,
-                            result.yaraidentifier,
-                            result.yarastring,
-                            str(result.ctime)
-                            ]
-                    writer.writerow(rec)
-
-                csvf.flush()
-
-            except queue.Empty:
-                continue
-    def stop(self):
-        self.__stop = True
 
 class FullScanner(threading.Thread):
     def __init__(self, root, scanq, options):
