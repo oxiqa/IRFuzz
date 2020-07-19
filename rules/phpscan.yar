@@ -87,12 +87,17 @@ rule AnyMaliciousPHP
         $malshell1 = "'ev'.'al'" fullword
         $malshell2 = /(\$\w+=[^;]*)*;\$\w+=@?\$\w+\(/  //b374k
         $malshell3 = /\$\w=\$[a-zA-Z]\('',\$\w\);\$\w\(\);/ 
+        $malshell7 = "array_intersect_uassoc(array($_REQUEST[$password] => \"\"), array(1), $f);" fullword ascii
+        $encode1 = /\\x[0-9a-zA-Z]{2}\\x[0-9a-zA-Z]{2}\\x[0-9a-zA-Z]{2}\\x[0-9a-zA-Z]{2}\\x[0-9a-zA-Z]{2}\\x[0-9a-zA-Z]{2}\\x[0-9a-zA-Z]{2}\\x[0-9a-zA-Z]{2}\\x[0-9a-zA-Z]{2}/
+        $encode2 = /\\x00[a-z]{1}\\x00[a-z]{1}\\x00[a-z]{1}\\x00[a-z]{1}\\x00[a-z]{1}\\x00[a-z]{1}/
+        $encode3 = /[!@#$.(:<-]\'\^\'/
+
         $system = /system\(/ fullword nocase 
 
         $whitelist = /escapeshellcmd|escapeshellarg/ nocase
 
     condition:
-        (not $whitelist and (any of ($shell*) and (filesize < 4KB) or (any of ($small*)) and filesize < 200 or $pregreplace and filesize < 200 or any of ($eval*) and filesize < 8KB or $system and filesize < 3KB or #system > 5 or #eval1 > 5  or #shell2 > 4 or any of ($malshell*) ))
+        (not $whitelist and (any of ($shell*) and (filesize < 4KB) or any of ($encode*) and filesize < 1KB or (any of ($small*)) and filesize < 1KB or $pregreplace and filesize < 200 or any of ($eval*) and filesize < 8KB or $system and filesize < 3KB or #system > 5 or #eval1 > 5  or #shell2 > 4 or any of ($malshell*) ))
 }
 
 rule AnyMaliciousPHPBase64
