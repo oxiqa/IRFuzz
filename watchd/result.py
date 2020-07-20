@@ -11,7 +11,7 @@ import http.client as http_client
 
 from loguru import logger
 
-http_client.HTTPConnection.debuglevel = 1
+# http_client.HTTPConnection.debuglevel = 1
 
 @dataclass
 class Result:
@@ -80,7 +80,7 @@ class CSVWriter(ResultWriterPlugin):
 
 class HTTPWriter(ResultWriterPlugin):
     def __init__(self, token):
-        self.__base = "http://vps-f212c571.vps.ovh.ca/api/v1/infections/bulk"
+        self.__base = "http://vps-f212c571.vps.ovh.ca/api/v1/infections/"
         self.__token = token
 
     def write(self, results):
