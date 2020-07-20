@@ -33,6 +33,8 @@ rule MaliciousPHP
         $ = "posix_geteuid" fullword nocase
         $ = "posix_getgid" fullword nocase
         $ = "posix_getpgid" fullword nocase
+        $ = /(fopen|fwrite|fputs|file\_put\_contents)+\s*\((.*)\$\_(GET|POST|REQUEST|COOKIE|SERVER)+\[(.*)\](.*)\)/
+        $ = /(exec|shell\_exec|system|passthru)+\s*\(\s*\$\_(\w+)\[(.*)\]\s*\)/
         $ = "posix_getppid" fullword nocase
         $ = "posix_getpwnam" fullword nocase
         $ = "posix_getpwuid" fullword nocase
@@ -77,6 +79,12 @@ rule AnyMaliciousPHP
         $shell2 = "shell_exec" fullword nocase
         $shell3 = "fpassthru" fullword nocase
         $shell4 = "passthru" fullword nocase
+        $shell5 = "print_r($_POST['funct']($_POST['argv']));" fullword ascii
+        $shell6 = "$cmd=$_POST['cmd'];" fullword ascii
+        $shell7 = "op=phpinfo" fullword nocase
+        $shell8 = "$cmd==" fullword nocase
+        $shell9 = "@ini_get('safe_mode_exec_dir')" nocase
+        $shell10 = /(exec|shell\_exec|system|passthru)+\s*\(\s*\$\_(\w+)\[(.*)\]\s*\)/
         $small1 = "array_filter" fullword nocase
         $small2 = "assert" fullword nocase
         $small3 = "pcntl_exec" fullword nocase
@@ -85,6 +93,7 @@ rule AnyMaliciousPHP
         $malshell5 = "weevely" fullword nocase
         $malshell6 = "backdoor" fullword nocase
         $malshell1 = "'ev'.'al'" fullword
+        $malshell8 = "m6aa932e" fullword 
         $malshell2 = /(\$\w+=[^;]*)*;\$\w+=@?\$\w+\(/  //b374k
         $malshell3 = /\$\w=\$[a-zA-Z]\('',\$\w\);\$\w\(\);/ 
         $malshell7 = "array_intersect_uassoc(array($_REQUEST[$password] => \"\"), array(1), $f);" fullword ascii
@@ -92,12 +101,13 @@ rule AnyMaliciousPHP
         $encode2 = /\\x00[a-z]{1}\\x00[a-z]{1}\\x00[a-z]{1}\\x00[a-z]{1}\\x00[a-z]{1}\\x00[a-z]{1}/
         $encode3 = /[!@#$.(:<-]\'\^\'/
 
+
         $system = /system\(/ fullword nocase 
 
         $whitelist = /escapeshellcmd|escapeshellarg/ nocase
 
     condition:
-        (not $whitelist and (any of ($shell*) and (filesize < 4KB) or any of ($encode*) and filesize < 1KB or (any of ($small*)) and filesize < 1KB or $pregreplace and filesize < 200 or any of ($eval*) and filesize < 8KB or $system and filesize < 3KB or #system > 5 or #eval1 > 5  or #shell2 > 4 or any of ($malshell*) ))
+        (not $whitelist and (any of ($shell*) and (filesize < 4KB) or any of ($encode*) and filesize < 2KB or (any of ($small*)) and filesize < 1KB or $pregreplace and filesize < 200 or any of ($eval*) and filesize < 8KB or $system and filesize < 3KB or #system > 5 or #eval1 > 5  or #shell2 > 4 or any of ($malshell*) ))
 }
 
 rule AnyMaliciousPHPBase64
@@ -145,7 +155,51 @@ rule hackerstrings
         $ = "fuck" fullword nocase
         $ = "xshellnet" fullword nocase
         $ = "asshole" fullword nocase
-        
+        $ = "yahoo21.persiangig.com" nocase
+        $ = "xmail.txt" nocase
+        $ = "heysec.org" nocase
+        $ = /x2?\.net\.ru/ nocase
+        $ = "windows\\system32\\cmd.exe" nocase
+        $ = "Madleets.com" nocase
+        $ = "/etc/passwd" nocase
+        $ = "Safe_Mode Bypass" nocase
+        $ = "g00nshell" nocase
+        $ = "/bin/sh" nocase
+        $ = "imhabirligi.com" nocase
+        $ = "zehirhacker" nocase
+        $ = "cmd.exe /c" nocase
+        $ = "t00ls.net" nocase
+        $ = "g22b.cc" nocase
+        $ = "90sec.org" nocase
+        $ = "AntSword PHP Custom Spy" fullword nocase
+        $ = "KingDefacer" nocase
+        $ = "Antichat Shell" nocase
+        $ = "brilns.com" nocase
+        $ = "cmd=whoami" nocase
+        $ = "SR-Crew.de.tt" nocase
+        $ = "simorgh-ev.com" nocase
+        $ = "blackbap.org" nocase
+        $ = "mgeisler.net" nocase 
+        $ = "/tmp/output.txt" nocase
+        $ = "php-webshell" nocase
+        $ = "popeye.snu.ac.kr" nocase
+        $ = "d3vilc0de.org" nocase
+        $ = "WebShell-login" nocase
+        $ = "hell-z0ne.org" nocase
+        $ = "/dev/null 2>" nocase
+        $ = "ru.myip.ms" nocase
+        $ = "FrontPage.Editor.Document" nocase
+        $ = "exploit-db.com" nocase
+        $ = "ak74-team.net" nocase
+        $ = "priv8coder@gmail.com" nocase
+        $ = "moonhack.org" nocase
+        $ = "eXpl0id" nocase
+        $ = "geisler.net" nocase
+        $ = "w0rms.com" nocase
+        $ = "private-node.net" nocase
+        $ = "rohitab.com" nocase
+        $ = "sectop.com" nocase
+        $ = "safe_mode bypass" nocase
 
     condition:
         any of them
