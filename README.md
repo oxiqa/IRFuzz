@@ -44,7 +44,7 @@ with following commands:
 
 Generate token from https://irfuzz.com/tokens
 
-`$ python -m watchd.watch ~/tools/IR/ -y rules/maldocs --csv csvfile.csv --extensions .php --tokens tokenhere`
+`$ python -m watchd.watch ~/tools/IR/ -y rules/maldocs --csv csvfile.csv --extensions .php --token tokenhere`
 
 Configure alerts from the website to Telegram or your email.
 
