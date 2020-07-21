@@ -40,6 +40,14 @@ with following commands:
 
 `$ python -m watchd.watch ~/tools/IR/ -y rules/maldocs --csv csvfile.csv --extensions .zip,.rar`
 
+### Alert matching yara rule
+
+Generate token from https://irfuzz.com/tokens
+
+`$ python -m watchd.watch ~/tools/IR/ -y rules/maldocs --csv csvfile.csv --extensions .php --tokens tokenhere`
+
+Configure alerts from the website to Telegram or your email.
+
 ### Delete matched file 
 
 `$ python -m watchd.watch ~/tools/IR/ -y rules/maldocs --csv csvfile.csv --delete`
